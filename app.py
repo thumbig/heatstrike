@@ -10,7 +10,6 @@ from typing import Optional
 import pandas as pd
 from flask import Flask, render_template, request, send_from_directory, flash, session
 
-# Alpaca + your modules (gvars/pvars based)
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetOptionContractsRequest
 from alpaca.data.historical import OptionHistoricalDataClient, StockHistoricalDataClient
@@ -31,6 +30,10 @@ UNDERLYING_DEFAULT = "AAPL"
 OUTPUT_DIR = Path("static")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+API_KEY_PAPER = os.environ.get("ALPACA_KEY_ID_PAPER")
+API_SECRET_PAPER = os.environ.get("ALPACA_SECRET_KEY_PAPER")
+ALPACA_API_KEY = os.environ.get("ALPACA_KEY_ID")
+ALPACA_SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY")
 N_EXPIRIES = int(os.getenv("N_EXPIRIES", "9"))
 K_PER_EXPIRY = int(os.getenv("K_PER_EXPIRY", "11"))
 EVERY_OTHER_STEP = int(os.getenv("EVERY_OTHER_STEP", "2"))
@@ -49,13 +52,11 @@ app.secret_key = "dev-secret"  # replace as desired
 
 def _get_clients(paper: bool = True):
     if paper:
-        import gvars as cred
-        API_KEY = cred.ALPACA_API_KEY_2
-        API_SECRET = cred.ALPACA_SECRET_KEY_2
+        API_KEY = API_KEY_PAPER
+        API_SECRET = API_SECRET_PAPER
     else:
-        import pvars as cred
-        API_KEY = cred.ALPACA_API_KEY
-        API_SECRET = cred.ALPACA_SECRET_KEY
+        API_KEY = ALPACA_API_KEY
+        API_SECRET = ALPACA_SECRET_KEY
     trade = TradingClient(API_KEY, API_SECRET, paper=paper)
     opt_data = OptionHistoricalDataClient(API_KEY, API_SECRET)
     stk_data = StockHistoricalDataClient(API_KEY, API_SECRET)
