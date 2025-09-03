@@ -1,0 +1,17 @@
+.idea
+__pycache__
+logs/
+venv
+*.db*
+*.py[cod]
+.coverage
+tmp
+tmp.*
+.tmp
+pvars*
+data/.~lock.*.csv#
+combined_code.txt
+reconstructed_project/
+node_modules/
+static/*.png
+

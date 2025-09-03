@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title or "Options Heatmaps" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color: #111; }
+      header { margin-bottom: 16px; }
+      form { display: grid; gap: 12px; max-width: 1000px; align-items: end; grid-template-columns: 1fr 1fr 1fr 1fr auto; }
+      label { font-size: 0.9rem; color: #333; }
+      input[type="text"], select { padding: 8px 10px; font-size: 1rem; }
+      button { padding: 10px 14px; font-size: 1rem; border: 1px solid #bbb; background: #f8f8f8; cursor: pointer; }
+      button:hover { background: #eee; }
+      .row { display: flex; gap: 16px; align-items: center; }
+      .imgwrap { margin-top: 16px; }
+      .imgwrap img { max-width: 95vw; border: 1px solid #ddd; }
+      .flash { padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; }
+      .flash.error { background: #fee; border: 1px solid #fbb; }
+      .flash.warning { background: #fffae6; border: 1px solid #eed97c; }
+      .spot { margin: 8px 0 10px; color: #333; }
+      .meta { margin: 4px 0 14px; color: #555; font-size: 0.9rem; }
+      textarea { width: 100%; min-height: 120px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>{{ title or "Options Heatmaps" }}</h1>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </body>
+</html>
+
