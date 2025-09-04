@@ -19,7 +19,11 @@ from options_heatmap.selection import select_symbols_balanced
 from options_heatmap.fetch import fetch_contracts_balanced
 
 # ---------------------- Config ----------------------
-UNDERLYING = os.getenv("UNDERLYING_SYMBOL", "AAPL")
+API_KEY_PAPER = os.environ.get("ALPACA_KEY_ID_PAPER")
+API_SECRET_PAPER = os.environ.get("ALPACA_SECRET_KEY_PAPER")
+ALPACA_API_KEY = os.environ.get("ALPACA_KEY_ID")
+ALPACA_SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY")
+UNDERLYING = os.getenv("UNDERLYING_SYMBOL", "SPY")
 N_EXPIRIES = int(os.getenv("N_EXPIRIES", "9"))
 K_PER_EXPIRY = int(os.getenv("K_PER_EXPIRY", "11"))
 EVERY_OTHER_STEP = int(os.getenv("EVERY_OTHER_STEP", "2"))
@@ -43,18 +47,17 @@ def main(trade: TradingClient | None = None,
          opt_data: OptionHistoricalDataClient | None = None,
          stk_data: StockHistoricalDataClient | None = None,
          paper: bool = True) -> None:
-    # Your gvars/pvars auth flow (unchanged)
     if trade is None or opt_data is None or stk_data is None:
         if paper:
-            from gvars import ALPACA_API_KEY_2 as API_KEY, ALPACA_SECRET_KEY_2 as API_SECRET
-            trade = trade or TradingClient(API_KEY, API_SECRET, paper=True)
-            opt_data = opt_data or OptionHistoricalDataClient(API_KEY, API_SECRET)
-            stk_data = stk_data or StockHistoricalDataClient(API_KEY, API_SECRET)
+            API_KEY = API_KEY_PAPER
+            API_SECRET = API_SECRET_PAPER
         else:
-            from pvars import ALPACA_API_KEY as API_KEY, ALPACA_SECRET_KEY as API_SECRET
-            trade = trade or TradingClient(API_KEY, API_SECRET, paper=False)
-            opt_data = opt_data or OptionHistoricalDataClient(API_KEY, API_SECRET)
-            stk_data = stk_data or StockHistoricalDataClient(API_KEY, API_SECRET)
+            API_KEY = ALPACA_API_KEY
+            API_SECRET = ALPACA_SECRET_KEY
+
+        trade = trade or TradingClient(API_KEY, API_SECRET, paper=paper)
+        opt_data = opt_data or OptionHistoricalDataClient(API_KEY, API_SECRET)
+        stk_data = stk_data or StockHistoricalDataClient(API_KEY, API_SECRET)
 
     spot = _get_spot(stk_data, UNDERLYING)
 

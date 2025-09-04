@@ -26,7 +26,7 @@ from options_heatmap.plot import (
     plot_mispriced_heatmap,
 )
 
-UNDERLYING_DEFAULT = "AAPL"
+UNDERLYING_DEFAULT = "SPY"
 OUTPUT_DIR = Path("static")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
