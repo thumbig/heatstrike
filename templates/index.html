@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post" id="controls-form">
+  <div>
+    <label>Pick an underlying</label>
+    <select name="dropdown_symbol" id="dropdown_symbol">
+      <option value="">(choose)</option>
+      {% for u in allowed %}
+        <option value="{{ u }}" {% if selected_dropdown == u %}selected{% endif %}>{{ u }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Or type a symbol</label>
+    <input name="symbol" id="symbol_input" placeholder="e.g., AAPL or SPX" value="{{ symbol or '' }}" />
+  </div>
+  <div>
+    <label>Metric</label>
+    <select name="metric">
+      <option value="mispriced" {% if metric=='mispriced' %}selected{% endif %}>Mispriced</option>
+      <option value="gamma" {% if metric=='gamma' %}selected{% endif %}>Gamma</option>
+      <option value="theta" {% if metric=='theta' %}selected{% endif %}>Theta</option>
+    </select>
+  </div>
+  <div>
+    <label>Use Paper Account?</label>
+    <select name="paper">
+      <option value="1" {% if paper=='1' %}selected{% endif %}>Yes</option>
+      <option value="0" {% if paper=='0' %}selected{% endif %}>No</option>
+    </select>
+  </div>
+  <div class="row">
+    <button type="submit" name="action" value="render">Render / Save PNG</button>
+    <a href="/interactive?symbol={{ symbol }}&dropdown_symbol={{ selected_dropdown }}&metric={{ metric }}&paper={{ paper }}"><button type="button">Interactive</button></a>
+  </div>
+</form>
+
+{% if spot is not none %}
+  <div class="spot">Spot price for <b>{{ symbol }}</b>: ${{ '%.2f'|format(spot) }}</div>
+{% endif %}
+{% if iv_info %}
+  <div class="meta">{{ iv_info }}</div>
+{% endif %}
+
+{% if image_path %}
+  <div class="imgwrap">
+    <img src="/{{ image_path }}?t={{ range(1, 100000) | random }}" alt="heatmap" />
+  </div>
+  <div class="row">
+    <a href="/{{ download_href }}" download>
+      <button type="button">Download PNG</button>
+    </a>
+  </div>
+{% endif %}
+
+<script>
+  // Sync dropdown -> textbox immediately
+  const dd = document.getElementById('dropdown_symbol');
+  const tb = document.getElementById('symbol_input');
+  function syncDropdownToTextbox() { if (dd && tb && dd.value) tb.value = dd.value; }
+  dd && dd.addEventListener('change', syncDropdownToTextbox);
+  window.addEventListener('DOMContentLoaded', syncDropdownToTextbox);
+</script>
+{% endblock %}
+

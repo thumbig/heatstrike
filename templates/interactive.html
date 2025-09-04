@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="get" id="controls-form" action="/interactive">
+  <div>
+    <label>Pick an underlying</label>
+    <select name="dropdown_symbol" id="dropdown_symbol">
+      <option value="">(choose)</option>
+      {% for u in allowed %}
+        <option value="{{ u }}" {% if selected_dropdown == u %}selected{% endif %}>{{ u }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Or type a symbol</label>
+    <input name="symbol" id="symbol_input" placeholder="e.g., AAPL or SPX" value="{{ symbol or '' }}" />
+  </div>
+  <div>
+    <label>Metric</label>
+    <select name="metric">
+      <option value="mispriced" {% if metric=='mispriced' %}selected{% endif %}>Mispriced</option>
+      <option value="gamma" {% if metric=='gamma' %}selected{% endif %}>Gamma</option>
+      <option value="theta" {% if metric=='theta' %}selected{% endif %}>Theta</option>
+    </select>
+  </div>
+  <div>
+    <label>Use Paper Account?</label>
+    <select name="paper">
+      <option value="1" {% if paper=='1' %}selected{% endif %}>Yes</option>
+      <option value="0" {% if paper=='0' %}selected{% endif %}>No</option>
+    </select>
+  </div>
+  <div class="row">
+    <button type="submit">Update</button>
+    <a href="/"><button type="button">Back to PNG</button></a>
+  </div>
+</form>
+
+{% if spot is not none %}
+  <div class="spot">Spot price for <b>{{ symbol }}</b>: ${{ '%.2f'|format(spot) }}</div>
+{% endif %}
+
+<div id="plot" style="max-width: 1200px;">{{ plot_html|safe }}</div>
+
+<script>
+  // Sync dropdown -> textbox immediately
+  const dd = document.getElementById('dropdown_symbol');
+  const tb = document.getElementById('symbol_input');
+  function syncDropdownToTextbox() {
+    if (dd && tb && dd.value) tb.value = dd.value;
+  }
+  dd && dd.addEventListener('change', syncDropdownToTextbox);
+  window.addEventListener('DOMContentLoaded', syncDropdownToTextbox);
+</script>
+{% endblock %}
