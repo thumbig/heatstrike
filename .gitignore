@@ -9,7 +9,7 @@ tmp*
 *.tmp
 pvars*
 data/.~lock.*.csv#
-combined_code.txt
+combined_code*.txt
 reconstructed_project/
 node_modules/
 static/*.png
