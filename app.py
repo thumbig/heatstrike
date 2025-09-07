@@ -9,8 +9,9 @@ from typing import Optional
 import pandas as pd
 
 from flask import (
-    Flask, render_template, request, flash, Markup
+    Flask, render_template, request, flash
 )
+from markupsafe import Markup
 
 # Headless matplotlib for Seaborn PNG export
 import matplotlib
