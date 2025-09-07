@@ -1,0 +1,5 @@
+[run]
+source = options_heatmap, tests
+omit =
+    tests/*
+    */test_*.py

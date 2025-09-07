@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Seaborn Matrix</title>
+    <title>Plotly Matrix</title>
     <style>
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 16px; }
       form { display: grid; grid-template-columns: repeat(4, minmax(200px, 1fr)); gap: 12px; align-items: end; }
@@ -14,26 +14,12 @@
       .btn { padding: 8px 12px; border-radius: 6px; border: 1px solid #bbb; background: #f7f7f7; cursor: pointer; }
       .btn:hover { background: #eee; }
       .notice { color: #666; font-size: 12px; }
-      .figure { margin-top: 16px; }
-      img.plot { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; }
-      .error { color: #b00020; font-weight: 600; }
-      .flash { color: #333; background: #fff8d2; border: 1px solid #ffe27a; padding: 8px 12px; border-radius: 6px; }
-      .inline { display: inline-flex; align-items: center; gap: 6px; margin-right: 10px; }
-      .inline input[type="checkbox"] { transform: translateY(1px); }
     </style>
   </head>
   <body>
-    <h1>Seaborn Options Matrix</h1>
+    <h1>Plotly Options Matrix</h1>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    {% if error %}<div class="error">{{ error }}</div>{% endif %}
-
-    <form method="get" action="{{ url_for('ui.seaborn_view') }}">
+    <form method="get" action="{{ url_for('ui.plotly_view') }}">
       <fieldset>
         <legend>Underlying & Metric</legend>
         <label>Symbol</label>
@@ -44,10 +30,11 @@
           <option value="gamma" {% if metric=='gamma' %}selected{% endif %}>Gamma</option>
           <option value="theta" {% if metric=='theta' %}selected{% endif %}>Theta</option>
         </select>
-        <div class="inline">
-          <input id="paper" type="checkbox" name="paper" value="1" {% if paper %}checked{% endif %} />
-          <label for="paper">Paper</label>
-        </div>
+        <label>Paper</label>
+        <select name="paper">
+          <option value="1" {% if paper %}selected{% endif %}>Yes</option>
+          <option value="0" {% if not paper %}selected{% endif %}>No</option>
+        </select>
       </fieldset>
 
       <fieldset>
@@ -57,23 +44,18 @@
           <option value="1" {% if side_by_side %}selected{% endif %}>Yes</option>
           <option value="0" {% if not side_by_side %}selected{% endif %}>No</option>
         </select>
-
         <label>Y-Axis Order</label>
         <select name="y_order">
-          <option value="desc" {% if y_order=='desc' %}selected{% endif %}>Descending (top = high strike)</option>
-          <option value="asc" {% if y_order=='asc' %}selected{% endif %}>Ascending (top = low strike)</option>
+          <option value="desc" {% if y_order=='desc' %}selected{% endif %}>Descending</option>
+          <option value="asc" {% if y_order=='asc' %}selected{% endif %}>Ascending</option>
         </select>
-
-        <label>Annotate Cells</label>
+        <label>Annotate</label>
         <select name="annotate">
           <option value="iv" {% if annotate=='iv' %}selected{% endif %}>IV</option>
           <option value="theo" {% if annotate=='theo' %}selected{% endif %}>Theoretical Price</option>
           <option value="symbol" {% if annotate=='symbol' %}selected{% endif %}>Symbol</option>
           <option value="none" {% if annotate=='none' %}selected{% endif %}>None</option>
         </select>
-
-        <label>Save Filename (PNG)</label>
-        <input type="text" name="save" value="{{ save or '' }}" placeholder="optional e.g. matrix.png" />
       </fieldset>
 
       <fieldset>
@@ -100,7 +82,6 @@
         <input type="date" name="exp_end" value="{{ exp_end_val or '' }}" />
         <label>Strikes Count (centered around ATM)</label>
         <input type="number" min="1" name="strikes_count" value="{{ strikes_count or '' }}" />
-        <div class="notice">Provide ranges and/or a centered count. Leave blank to use defaults.</div>
       </fieldset>
 
       <div class="row">
@@ -111,12 +92,10 @@
       </div>
     </form>
 
-    <div class="figure">
-      {% if figure_png %}
-        <img class="plot" src="data:image/png;base64,{{ figure_png }}" alt="Seaborn matrix" />
-      {% endif %}
+    <div style="margin-top:16px;">
+      {{ plot_html|safe }}
     </div>
-
   </body>
 </html>
+
 
